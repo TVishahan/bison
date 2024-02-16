@@ -28,6 +28,9 @@ add_executable(${PROJECT_EXEC} ${ALL_SRC})
 add_subdirectory(${DIR_LIB}/glfw)
 target_include_directories(${PROJECT_EXEC} PRIVATE "${DIR_LIB}/glfw/include/")
 
+add_subdirectory(${DIR_LIB}/json)
+target_include_directories(${PROJECT_EXEC} PUBLIC "${DIR_LIB}/json/include/")
+
 find_package(OpenGL REQUIRED)
 
-target_link_libraries(${PROJECT_EXEC} PRIVATE glfw OpenGL::GL)
+target_link_libraries(${PROJECT_EXEC} PRIVATE glfw OpenGL::GL nlohmann_json::nlohmann_json)
