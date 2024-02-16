@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20.2)
 project("biso")
 set(PROJECT_GITNAME   "BISO.Helper")
 set(PROJECT_LONGNAME  "Batch Install Script Organizer")
-set(PROJECT_EXEC      "biso")
+set(PROJECT_EXEC      "bison")
 set(PROJECT_VERSION   "dev_00001")
 set(ALLOW_DUPLICATE_CUSTOM_TARGETS TRUE)
 
