@@ -1,106 +1,124 @@
-// Dear ImGui: standalone example application for GLFW + OpenGL 3, using programmable pipeline
-// (GLFW is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
+#pragma once
 
-// Learn about Dear ImGui:
-// - FAQ                  https://dearimgui.com/faq
-// - Getting Started      https://dearimgui.com/getting-started
-// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
-// - Introduction, links and more at the top of imgui.cpp
+#include <cmath>
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include <stdio.h>
-#define GL_SILENCE_DEPRECATION
-#include <GLFW/glfw3.h> // Will drag system OpenGL headers
-#include <core.h>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
-// [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
-// To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
-// Your own project should not be affected, as you are likely to link with a newer binary of GLFW that is adequate for your version of Visual Studio.
-#if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS)
-#pragma comment(lib, "legacy_stdio_definitions")
-#endif
+#include <ftxui/dom/elements.hpp>
+#include <ftxui/screen/screen.hpp>
+#include <ftxui/component/component.hpp>
+#include <ftxui/component/component_base.hpp>
+#include <ftxui/component/event.hpp>
+#include <ftxui/component/mouse.hpp>
+#include <ftxui/component/screen_interactive.hpp>
+#include <ftxui/dom/canvas.hpp>
+#include <ftxui/screen/color.hpp>
+
+int start_gui(){
+    using namespace ftxui;
+    auto screen_main = ScreenInteractive::Fullscreen();
 
 
-static void glfw_error_callback(int error, const char* description)
-{
-    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
-}
 
-// Main code
-int guitest()
-{
-    glfwSetErrorCallback(glfw_error_callback);
-    if (!glfwInit())
-        return 1;
+    int menu_tab_index = 1;
+    std::vector<std::string> menu_tab_entries = {
+        " File ",
+        " Scripts ",
+        " Run ",
+        " Logs ",
+        " About "
+    };
+    auto menu_tab = Menu(&menu_tab_entries, &menu_tab_index,MenuOption::HorizontalAnimated());
 
-    // Decide GL+GLSL versions
-    // GL 3.0 + GLSL 130
-    const char* glsl_version = "#version 130";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    auto tab_file_btn_open = Button(" Open ", [&]{}, ButtonOption::Simple());
+    auto tab_file_btn_save = Button(" Save ", [&]{}, ButtonOption::Simple());
+    auto tab_file_btn_exit = Button(" Exit ", [&]{ screen_main.Exit(); }, ButtonOption::Simple());
 
-    // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(600, 500, "Batch Install Script Operator", nullptr, nullptr);
-    if (window == nullptr)
-        return 1;
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable vsync
+
+    auto tab_component_file = Container::Horizontal({
+        Container::Vertical({
+            tab_file_btn_open,
+            tab_file_btn_save,
+            tab_file_btn_exit
+        })
+    });
+
+    auto tab_renderer_file = Renderer(tab_component_file, [&] {
+        return hbox({
+            vbox({
+                tab_file_btn_open->Render(),
+                tab_file_btn_save->Render(),
+                hbox() | flex_grow,
+                tab_file_btn_exit->Render(),
+            }) | size(WIDTH, EQUAL, 25),
+            vbox({
+
+            }) | size(WIDTH, EQUAL, 1),
+            vbox({
+                paragraph("Lorem ipsum dolor sit amet, consectetur adipiscing elit. In lacinia viverra convallis. Nullam vitae purus luctus, molestie diam ut, posuere lectus. Suspendisse potenti. Integer tellus nulla, fringilla vel mollis sed, congue et nibh. Vivamus tristique, neque sed sodales semper, dui nisl lacinia diam, viverra sollicitudin nulla quam eget justo. Vivamus sagittis velit nec ultricies sagittis. Aenean id libero ac felis volutpat molestie. Nam luctus neque eget neque hendrerit pharetra. Integer eu quam mi. Morbi et bibendum lorem."),
+                text(""),
+                paragraph("Nam rhoncus molestie dolor aliquet tempor. Pellentesque tincidunt sem in quam convallis, mattis interdum erat tristique. In eget tempus enim. Quisque id egestas risus. Donec efficitur mauris nibh, eget venenatis mi porta non. Cras sit amet orci orci. Pellentesque at luctus neque."),
+                text(""),
+                paragraph("Vestibulum finibus ligula molestie, venenatis arcu sed, sollicitudin dolor. Aliquam erat volutpat. Suspendisse ut imperdiet metus. Aenean pharetra dolor nec magna viverra placerat. Nulla nec sollicitudin neque. Vestibulum convallis vulputate semper. Morbi consectetur ultricies blandit. Mauris non dolor ullamcorper ligula maximus lacinia. Sed dignissim ipsum in faucibus volutpat. Praesent bibendum nibh et odio scelerisque gravida. Ut dui arcu, finibus sodales elementum eu, aliquam ut nisl. Nunc fringilla sapien ut luctus tempus.")
+            })
+        });
+    });
+    auto tab_renderer_scripts = Renderer([] {
+        return vbox({
+            text("All the cool script management stuff.")
+        });
+    });
+    auto tab_renderer_run = Renderer([] {
+        return vbox({
+            text("Buttons and stuff to run the system.")
+        });
+    });
+    auto tab_renderer_logs = Renderer([] {
+        return vbox({
+            text("Small browser to look at logs.")
+        });
+    });
+
+    auto tab_renderer_about = Renderer([] {
+        return vbox({
+            text("Concept by Andrew Roth"),
+            text("Implemented by Vishahan Thilagakumar")
+        });
+    });
+
+    auto menu_tab_content = Container::Tab(
+        {
+            tab_renderer_file,
+            tab_renderer_scripts,
+            tab_renderer_run,
+            tab_renderer_logs,
+            tab_renderer_about,
+        },
+    &menu_tab_index);
+
+    auto btn_close = Button("Exit", [&]{}, ButtonOption::Ascii());
+    auto container_main = Container::Vertical({
+        Container::Horizontal({
+            menu_tab,
+        }),
+        menu_tab_content
+    });
+
+    auto renderer_main = Renderer(container_main, [&]{
+        return vbox({
+            hbox({ 
+                
+                text("BISON") | bold
+            }) | center,
+            menu_tab->Render(),
+            menu_tab_content->Render() | flex_grow
+        });
+    });
+
     
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-
-    bool show_demo_window = true;
-    bool show_another_window = true;
-    glClearColor(0.0f,0.0f,0.0f,1.0f);
-    int width, height;
-
-    while (!glfwWindowShouldClose(window))
-    {
-        glfwPollEvents();
-        glfwGetWindowSize(window, &width, &height);
-
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        bool show_dialog = true;
-        ImGui::SetNextWindowSize(ImVec2((float)width, (float)height));
-        ImGui::SetNextWindowPos( ImVec2(0,0) );
-        ImGui::Begin("Window A", 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar );
-        ImGui::Text("This is window A");
-        ImGui::Button("This is a test button");
-        ImGui::End();
-
-        // Rendering
-        ImGui::Render();
-
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        glfwSwapBuffers(window);
-        
-
-    }
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-
+    screen_main.Loop(renderer_main);
     return 0;
 }
