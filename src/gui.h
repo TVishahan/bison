@@ -99,11 +99,10 @@ int start_gui(){
         },
     &menu_tab_index);
 
-    auto btn_close = Button("Exit", [&]{}, ButtonOption::Ascii());
+    auto btn_close = Button("EXIT", [&]{}, ButtonOption::Ascii());
     auto container_main = Container::Vertical({
-        Container::Horizontal({
-            menu_tab,
-        }),
+        btn_close,
+        menu_tab,
         menu_tab_content
     });
 
@@ -111,13 +110,15 @@ int start_gui(){
         return vbox({
             hbox({ 
                 
-                text("BISON") | bold
-            }) | center,
+                text("BISON") | bold | flex_grow,
+                btn_close->Render()
+            }),
             menu_tab->Render(),
             menu_tab_content->Render() | flex_grow
         });
     });
 
+    focus(menu_tab->ActiveChild()->Render());
     
     screen_main.Loop(renderer_main);
     return 0;
