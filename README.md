@@ -1,4 +1,4 @@
-# BISON
+# B I S O N
 >__*B*atch *I*nstall *S*cript *O*rganization *N*exus__
 
 >__(*B*ish *I*s a *S*omewhat *O*riginal *N*ame)__
