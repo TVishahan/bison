@@ -1,4 +1,6 @@
-# BISON: Batch Install Script Organization Nexus
+# BISON
+### *B*atch *I*nstall *S*cript *O*rganization *N*exus
+### (*B*ish *I*s a *S*omewhat *O*riginal *N*ame)
 ## About
 A simple, glorified script runner with the intention of running multiple bat scripts in multiple cmd prompt instances serially. The ideal use case is to run multiple silent installers for a Windows system to be SysPrepped. 
 
