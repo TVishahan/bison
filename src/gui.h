@@ -110,7 +110,7 @@ int start_gui(){
         return vbox({
             hbox({ 
                 
-                text("BISON") | bold | flex_grow,
+                text("B I S O N") | bold | flex_grow,
                 btn_close->Render()
             }),
             menu_tab->Render(),
@@ -118,7 +118,6 @@ int start_gui(){
         });
     });
 
-    focus(menu_tab->ActiveChild()->Render());
     
     screen_main.Loop(renderer_main);
     return 0;
