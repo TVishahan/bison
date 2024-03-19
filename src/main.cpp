@@ -1,5 +1,6 @@
-#include <gui.h>
-#include <core.h>
+#include <ux/gui.h>
+#include <bison/structures.h>
+
 int main(){
     
     st_terminal* term = new_terminal(1, new_string("Hello Darkness My Old Friend "), true);

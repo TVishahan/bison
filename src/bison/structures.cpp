@@ -1,5 +1,5 @@
 #pragma once
-#include <core.h>
+#include <bison/structures.h>
 
 //New script initializer function.
 st_script* new_script(int id, char** name, char** path, bool active) {
@@ -45,7 +45,7 @@ char** new_string(char* str)
 
 
 //Add script to terminal.
-int add_script_into_terminal(st_terminal* terminal, st_script* script) {
+bool add_script_into_terminal(st_terminal* terminal, st_script* script) {
     //Check if adding a script will require an array resize.
     if(terminal->c_scripts + 1 + ARRAY_SIZE_RANGE > terminal->s_scripts) {
         //Create new array with larger size.
@@ -64,11 +64,11 @@ int add_script_into_terminal(st_terminal* terminal, st_script* script) {
     terminal->c_scripts++;
 
     //Return number of scripts added.
-    return 1;
+    return true;
 }
 
 //Add terminal to project, functionality mirrors add_script_into_terminal.
-int add_terminal_into_project(st_project* project, st_terminal* terminal) {
+bool add_terminal_into_project(st_project* project, st_terminal* terminal) {
     //Check if adding a terminal will require an array resize.
     if(project->c_terminals + 1 + ARRAY_SIZE_RANGE > project->s_terminals) {
         //Create new array with larger size.
@@ -87,7 +87,7 @@ int add_terminal_into_project(st_project* project, st_terminal* terminal) {
     project->c_terminals++;
 
     //Return number of terminal added.
-    return 1;
+    return true;
 }
 
 //Remove a script from the terminal using the id of the script.
@@ -186,15 +186,15 @@ st_terminal* remove_terminal_from_project(st_project* project, int id) {
 
 
 //Deleting a script and it's contents.
-int delete_script(st_script* script) {
+bool delete_script(st_script* script) {
     delete_string(script->name);
     delete_string(script->path);
     delete script;
-    return 1;
+    return true;
 }
 
 //Delete a terminal and, optionally, all scripts under it.
-int delete_terminal(st_terminal* terminal, bool include_children) {
+bool delete_terminal(st_terminal* terminal, bool include_children) {
     delete_string(terminal->name);
     //Dekete scripts if set to do so.
     if(include_children) {
@@ -206,11 +206,11 @@ int delete_terminal(st_terminal* terminal, bool include_children) {
     }
     delete[] terminal->scripts;
     delete terminal;
-    return 1;
+    return true;
 }
 
 //Delete a terminal and, optionally, all scripts under it.
-int delete_project(st_project* project, bool include_children) {
+bool delete_project(st_project* project, bool include_children) {
     delete_string(project->name);
     //Dekete scripts if set to do so.
     if(include_children) {
@@ -222,13 +222,13 @@ int delete_project(st_project* project, bool include_children) {
     }
     delete[] project->terminals;
     delete project;
-    return 1;
+    return true;
 }
 
 //Deleting a char**.
-int delete_string(char** string) {
+bool delete_string(char** string) {
     delete[] string[0];
     delete[] string;
-    return 1;
+    return true;
 }
 

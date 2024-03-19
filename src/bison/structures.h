@@ -8,6 +8,7 @@
 #define STRING_SIZE_MAX         512
 
 
+
 struct st_config {
     unsigned int    id;
     char**          path_scripts;
@@ -44,15 +45,15 @@ st_project*  new_project  (int id, char** name);
 char**       new_string   (char* str);
 
 //Add/Remove scripts to/from a terminal.
-int         add_script_into_terminal    (st_terminal* terminal, st_script* script);
+bool        add_script_into_terminal    (st_terminal* terminal, st_script* script);
 st_script*  remove_script_from_terminal (st_terminal* terminal, int id);
 
 //Add/Remove terminals to/from a project.
-int          add_terminal_into_project    (st_project* project, st_terminal* terminal);
+bool         add_terminal_into_project    (st_project* project, st_terminal* terminal);
 st_terminal* remove_terminal_from_project (st_project* project, int id);
 
 //Delete GC functions.
-int delete_script   (st_script* script);
-int delete_terminal (st_terminal* terminal, bool include_children = false);
-int delete_project  (st_project* project, bool include_children = false);
-int delete_string   (char** string);
+bool delete_script   (st_script* script);
+bool delete_terminal (st_terminal* terminal, bool include_children = false);
+bool delete_project  (st_project* project, bool include_children = false);
+bool delete_string   (char** string);
