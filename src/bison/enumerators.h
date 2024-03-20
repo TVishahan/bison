@@ -5,28 +5,28 @@
 //to be manually filled out.
 enum es_type {
     tNONE,
-    string,
-    config,
-    script,
-    terminal,
-    project
+    tstring,
+    tconfig,
+    tscript,
+    tterminal,
+    tproject
 };
 
 enum es_func {
     fNONE,
-    new_script,
-    new_terminal,
-    new_project,
-    new_string,
+    fnew_script,
+    fnew_terminal,
+    fnew_project,
+    fnew_string,
 
-    add_script_into_terminal,
-    remove_script_from_terminal,
+    fadd_script_into_terminal,
+    fremove_script_from_terminal,
 
-    add_terminal_into_project,
-    remove_terminal_from_project,
+    fadd_terminal_into_project,
+    fremove_terminal_from_project,
 
-    delete_script,
-    delete_terminal,
-    delete_project,
-    delete_string
+    fdelete_script,
+    fdelete_terminal,
+    fdelete_project,
+    fdelete_string
 };

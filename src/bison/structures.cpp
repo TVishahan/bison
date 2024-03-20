@@ -1,8 +1,14 @@
 #pragma once
 #include <bison/structures.h>
 
+
+//Core Data Structures
+//-------------------------------------------------------------------------
+//  This holds structures for script project management and the terminals 
+//  that they exist in.
+
 //New script initializer function.
-st_script* new_script(int id, char** name, char** path, bool active) {
+st_script* new_script(int id, std::string name, std::string path, bool active) {
     st_script* o = new st_script();
     o->id = id;
     o->name = name;
@@ -12,7 +18,7 @@ st_script* new_script(int id, char** name, char** path, bool active) {
 }
 
 //New terminal initializer function.
-st_terminal* new_terminal(int id, char** name, bool active) {
+st_terminal* new_terminal(int id, std::string name, bool active) {
     st_terminal* o = new st_terminal();
     o->id = id;
     o->name = name;
@@ -24,7 +30,7 @@ st_terminal* new_terminal(int id, char** name, bool active) {
 }
 
 //New project initializer function.
-st_project* new_project(int id, char** name) {
+st_project* new_project(int id, std::string name) {
     st_project* o = new st_project();
     o->id = id;
     o->name = name;
@@ -32,15 +38,6 @@ st_project* new_project(int id, char** name) {
     o->s_terminals = ARRAY_SIZE_DEFAULT;
     o->c_terminals = 0;
     return o;
-}
-
-//Used to create a new char array in the format we would need.
-char** new_string(char* str)
-{
-    char** ptr = new char*[1];
-    ptr[0] = new char[STRING_SIZE_MAX];
-    strcpy(ptr[0], str);
-    return ptr;
 }
 
 
@@ -91,7 +88,7 @@ bool add_terminal_into_project(st_project* project, st_terminal* terminal) {
 }
 
 //Remove a script from the terminal using the id of the script.
-st_script* remove_script_from_terminal(st_terminal* terminal, int id) {
+st_script* remove_script_from_terminal(st_terminal* terminal, st_script* script) {
     if(terminal->c_scripts==0) return nullptr;
 
     //Search scripts until id can be found. 
@@ -99,7 +96,7 @@ st_script* remove_script_from_terminal(st_terminal* terminal, int id) {
     bool found = false;
     for(i = 0; i < terminal->c_scripts; i++) {
         if(!terminal->scripts[i]) {
-            if(terminal->scripts[i]->id == id) {
+            if(terminal->scripts[i] == script) {
                 found = true;
                 break;
             }
@@ -108,6 +105,8 @@ st_script* remove_script_from_terminal(st_terminal* terminal, int id) {
 
     //Return if not found.
     if(!found) return nullptr;
+
+    //Pop out the script.
     st_script* o = terminal->scripts[i];
     terminal->scripts[i] = nullptr;
 
@@ -138,7 +137,7 @@ st_script* remove_script_from_terminal(st_terminal* terminal, int id) {
 }
 
 //Remove a terminal from the project using the id of the terminal.
-st_terminal* remove_terminal_from_project(st_project* project, int id) {
+st_terminal* remove_terminal_from_project(st_project* project, st_terminal* terminal) {
     if(project->c_terminals==0) return nullptr;
 
     //Search terminals until id can be found. 
@@ -146,7 +145,7 @@ st_terminal* remove_terminal_from_project(st_project* project, int id) {
     bool found = false;
     for(i = 0; i < project->c_terminals; i++) {
         if(!project->terminals[i]) {
-            if(project->terminals[i]->id == id) {
+            if(project->terminals[i] == terminal) {
                 found = true;
                 break;
             }
@@ -155,6 +154,8 @@ st_terminal* remove_terminal_from_project(st_project* project, int id) {
 
     //Return if not found.
     if(!found) return nullptr;
+
+    //Pop out the terminal.
     st_terminal* o = project->terminals[i];
     project->terminals[i] = nullptr;
 
@@ -184,18 +185,74 @@ st_terminal* remove_terminal_from_project(st_project* project, int id) {
     return o;
 }
 
+//Shift a script in a terminal.
+bool shift_script_in_terminal(st_terminal* terminal, st_script* script, int direction) {
+    if(terminal->c_scripts==0) return false;
+    
+    //Search scripts until id can be found. 
+    unsigned int i;
+    bool found = false;
+    for(i = 0; i < terminal->c_scripts; i++) {
+        if(!terminal->scripts[i]) {
+            if(terminal->scripts[i] == script) {
+                found = true;
+                break;
+            }
+        }
+    }
+
+    //Return if not found.
+    if(!found) return false;
+
+    //Return if out of bounds.
+    if(0 >= i + direction && i + direction > terminal->c_scripts - 1) return false;
+    
+    //Swap the script with the one in the direction.
+    st_script* temp = terminal->scripts[i];
+    terminal->scripts[i] = terminal->scripts[i + direction];
+    terminal->scripts[i + direction] = temp;
+
+    return true;
+}
+
+//Shift a terminal in a project.
+bool shift_terminal_in_project(st_project* project, st_terminal* terminal, int direction) {
+    if(terminal->c_scripts==0) return false;
+    
+    //Search scripts until id can be found. 
+    unsigned int i;
+    bool found = false;
+    for(i = 0; i < project->c_terminals; i++) {
+        if(!project->terminals[i]) {
+            if(project->terminals[i] == terminal) {
+                found = true;
+                break;
+            }
+        }
+    }
+
+    //Return if not found.
+    if(!found) return false;
+
+    //Return if out of bounds.
+    if(0 >= i + direction && i + direction > terminal->c_scripts - 1) return false;
+    
+    //Swap the script with the one in the direction.
+    st_terminal* temp = project->terminals[i];
+    project->terminals[i] = project->terminals[i + direction];
+    project->terminals[i + direction] = temp;
+
+    return true;
+}
 
 //Deleting a script and it's contents.
 bool delete_script(st_script* script) {
-    delete_string(script->name);
-    delete_string(script->path);
     delete script;
     return true;
 }
 
 //Delete a terminal and, optionally, all scripts under it.
 bool delete_terminal(st_terminal* terminal, bool include_children) {
-    delete_string(terminal->name);
     //Dekete scripts if set to do so.
     if(include_children) {
         for(unsigned int i = 0; i < terminal->c_scripts; i++) {
@@ -211,7 +268,6 @@ bool delete_terminal(st_terminal* terminal, bool include_children) {
 
 //Delete a terminal and, optionally, all scripts under it.
 bool delete_project(st_project* project, bool include_children) {
-    delete_string(project->name);
     //Dekete scripts if set to do so.
     if(include_children) {
         for(unsigned int i = 0; i < project->c_terminals; i++) {
@@ -225,10 +281,48 @@ bool delete_project(st_project* project, bool include_children) {
     return true;
 }
 
-//Deleting a char**.
-bool delete_string(char** string) {
-    delete[] string[0];
-    delete[] string;
+
+//-------------------------------------------------------------------------
+
+//Delta Undo/Redo - Command Patern
+//-------------------------------------------------------------------------
+//  Each command has a function it would use to go forward and a function
+//  it would use to go backwards. Essentially making undos and redos delta
+//  based and not state based.
+
+//Create a new command buffer.
+st_cmdbuffer* new_cmdbuffer() {
+    st_cmdbuffer* o = new st_cmdbuffer;
+    o->s_buffer_forwards  = COMMAND_BUFFER_SIZE;
+    o->s_buffer_backwards = COMMAND_BUFFER_SIZE;
+    return o;
+}
+
+//Create a new command with optional data supplied.
+st_command* new_command(es_func cf, es_func cb, 
+    void* d1p, es_type d1t, void* d2p, es_type d2t, void* d3p, es_type d3t) {
+    st_command* o = new st_command;
+    o->cmd_forwards = cf;
+    o->cmd_backwards = cb;
+    o->d1_ptr = d1p;
+    o->d1_type = d1t;
+    o->d2_ptr = d2p;
+    o->d2_type = d2t;
+    o->d3_ptr = d3p;
+    o->d3_type = d3t;
+    return o;
+}
+
+//Delete a command buffer.
+bool delete_cmdbuffer(st_cmdbuffer* buffer) {
+
     return true;
 }
 
+//Execute a command from the command buffer.
+bool execute_command(st_command* command, int direction) {
+
+    return true;
+}
+
+//-------------------------------------------------------------------------
