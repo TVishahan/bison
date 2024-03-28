@@ -6,20 +6,21 @@
 #include <stdlib.h>
 #include <stack>
 #include <vector>
-#include <typeindex>
+
+
 
 //Core Data Structures
 //=======================================================================//
 //  This holds structures for script project management and the terminals 
 //  that they exist in.
 
-//  Structure initialization.
+//  Structure initialization
 //  -------------------------------------------------------------------  //
 struct stScript {
     unsigned int Id;
     std::string Name;
     std::string Path;
-    bool Active;
+    bool Active;    
 };
 
 struct stTerminal {
@@ -28,14 +29,29 @@ struct stTerminal {
     enTermApp App;
     std::vector<stScript*> Scripts; 
     bool Active;
+
+    //Script management functions.
+    int         find_script(stScript* script);
+    stScript*   find_script(int id);
+    bool        add_script(int at=-1);
+    stScript*   remove_script(stScript* script);
+    stScript*   remove_script(int at);
+    bool        move_script(int fr, int to);
 };
 
 //Project will also hold pointers to Scripts and Terminals for GC.
 struct stProject {
     unsigned int Id;
     std::string Name;
-    std::vector<stScript*> Scripts;
     std::vector<stTerminal*> Terminals;
+
+    //Terminal management functions.
+    int         find_terminal(stTerminal* terminal);
+    stTerminal* find_terminal(int id);
+    bool        add_terminal(int at=-1);
+    stTerminal* remove_terminal(stTerminal* terminal);
+    stTerminal* remove_terminal(int at);
+    bool        move_terminal(int fr, int to);
 };
 
 
@@ -43,9 +59,13 @@ struct stProject {
 //  -------------------------------------------------------------------  //
 
 //  Initialization functions.
-stScript* new_script(unsigned int Id, std::string Name, std::string Path, bool Active=true);
+stScript*   new_script(unsigned int Id, std::string Name, std::string Path, bool Active=true);
 stTerminal* new_terminal(unsigned int Id, std::string Name, enTermApp App, bool Active=true);
-stProject* new_project (unsigned int Id, std::string Name);
+stProject*  new_project(unsigned int Id, std::string Name);
+
+//  Create random ID that hasn't been init (By searching through the vector).
+unsigned int make_id(enStType type = ST_TYPE_NONE);
+
 
 
 //Delta Undo/Redo - Command Pattern
@@ -54,6 +74,8 @@ stProject* new_project (unsigned int Id, std::string Name);
 //  it would use to go backwards. Essentially making undos and redos delta
 //  based and not state based.
 
+
+
 //Garbage Collection
 //=======================================================================//
 //  A few funcions to be called during and at the end of the program to
@@ -61,7 +83,7 @@ stProject* new_project (unsigned int Id, std::string Name);
 
 //To be run sparringly to make check if there are any dereferenced 
 //instances and delete them. 
-int bison_audit();
+void bison_audit();
 
 //Delete all pointers at the end of the program.
-int bison_end();
+void bison_end();
