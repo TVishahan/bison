@@ -40,6 +40,7 @@ stProject* new_project(unsigned int Id, std::string Name) {
     return o;
 }
 
+
 //  stTerminal functions
 //  -------------------------------------------------------------------  //
 
@@ -56,8 +57,14 @@ stScript* stTerminal::find_script(int id) {
 }
 
 //Add a script to the back or at position. 
-bool stTerminal::add_script(int at=-1) {
+bool stTerminal::add_script(stScript script, int at=-1) {
+    if(at<0) {
 
+    }
+    else {
+
+    }
+    return true;
 }
 
 //Remove a script by value, returns the script.
@@ -95,6 +102,7 @@ stTerminal* stProject::find_terminal(int id) {
 bool stProject::add_terminal(int at=-1) {
 
 }
+
 stTerminal* stProject::remove_terminal(stTerminal* terminal) {
 
 }

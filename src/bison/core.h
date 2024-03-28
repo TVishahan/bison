@@ -33,7 +33,7 @@ struct stTerminal {
     //Script management functions.
     int         find_script(stScript* script);
     stScript*   find_script(int id);
-    bool        add_script(int at=-1);
+    bool        add_script(stScript script, int at=-1);
     stScript*   remove_script(stScript* script);
     stScript*   remove_script(int at);
     bool        move_script(int fr, int to);
@@ -48,7 +48,7 @@ struct stProject {
     //Terminal management functions.
     int         find_terminal(stTerminal* terminal);
     stTerminal* find_terminal(int id);
-    bool        add_terminal(int at=-1);
+    bool        add_terminal(stTerminal* terminal, int at=-1);
     stTerminal* remove_terminal(stTerminal* terminal);
     stTerminal* remove_terminal(int at);
     bool        move_terminal(int fr, int to);
