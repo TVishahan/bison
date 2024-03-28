@@ -1,35 +1,24 @@
 #include <ux/gui.h>
-#include <bison/structures.h>
+#include <bison/core.h>
 
 int main(){
+    stScript* s1 = new_script(1,"hello", "world", true);
+    stScript* s2 = new_script(2,"hello", "world", true);
+    stScript* s3 = new_script(3,"hello", "world", true);
+    stScript* s4 = new_script(4,"hello", "world", true);
+    stScript* s5 = new_script(5,"hello", "world", true);
+    stScript* s6 = new_script(6,"hello", "world", true);
+    stScript* s7 = new_script(7,"hello", "world", true);
+    stTerminal* t1 = new_terminal(1,"hello world", TERM_CMD, true);
+    stTerminal* t2 = new_terminal(2,"hello world", TERM_CMD, true);
+    stProject* p1 = new_project(1,"Hello World");
+
+    t1->Scripts.push_back(s2);
+    p1->Terminals.push_back(t1);
+    bison_audit();
+    t1->Scripts.push_back(s2);
     
-    st_terminal* term = new_terminal(1, "Hello darkness my old friend", true);
-    printf(term->name.c_str());
-    add_script_into_terminal(term, new_script( 1, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script( 2, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script( 3, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script( 4, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script( 5, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script( 6, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script( 7, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script( 8, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script( 9, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script(10, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script(11, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script(12, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script(13, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script(14, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script(15, "Hello Script", "Blues clues", true));
-    add_script_into_terminal(term, new_script(16, "Hello Script", "Blues clues", true));
-
-    printf("%d\n", term->s_scripts);
-    st_project* proj = new_project(1, "Hello Project");
-    add_terminal_into_project(proj,term);
-
-
-    delete_project(proj, true);
-    auto func = add_script_into_terminal;
-    
-    //start_gui();
+    std::cout <<  t1->Scripts.size() << std::endl;
+    bison_end();
     return 0;
 }
