@@ -57,29 +57,34 @@ stScript* stTerminal::find_script(int id) {
 }
 
 //Add a script to the back or at position. 
-bool stTerminal::add_script(stScript script, int at=-1) {
-    if(at<0) {
-
-    }
+bool stTerminal::add_script(stScript* script, int at) {
+    if(at<0) { this->Scripts.push_back(script); }
     else {
-
+        if(at>this->Scripts.size()) {
+            this->Scripts.insert(this->Scripts.begin() + at, script);
+        }
     }
+        
     return true;
 }
 
-//Remove a script by value, returns the script.
-stScript* stTerminal::remove_script(stScript* script) {
-
-}
-
 //Remove the script at index, returns the script.
-stScript* stTerminal::remove_script(int at) {
-
+bool stTerminal::remove_script(int at) {
+    this->Scripts.erase(this->Scripts.begin() + at);
+    return true;
 }
 
 //Move a script from index to index.
 bool stTerminal::move_script(int fr, int to) {
-
+    //Move works by popping the script out and adding it back in at
+    //the new position.
+    stScript* t = this->find_script(fr);
+    this->remove_script(fr);
+    if(to<fr)
+        this->add_script(t, to);
+    else
+        this->add_script(t, to-1);
+    return true;
 }
 
 
@@ -99,20 +104,36 @@ stTerminal* stProject::find_terminal(int id) {
 }
 
 //Add a terminal to the back or at position.
-bool stProject::add_terminal(int at=-1) {
-
+bool stProject::add_terminal(stTerminal* terminal, int at) {
+    if(at<0) {
+        this->Terminals.push_back(terminal);
+    }
+    else {
+        if(at>this->Terminals.size()) {
+            this->Terminals.insert(this->Terminals.begin() + at, terminal);
+        }
+    }
+    return true;
 }
 
-stTerminal* stProject::remove_terminal(stTerminal* terminal) {
-
+//Remove terminal from a project.
+bool stProject::remove_terminal(int at) {
+    this->Terminals.erase(this->Terminals.begin() + at);
+    return true;
 }
 
-stTerminal* stProject::remove_terminal(int at) {
 
-}
-
+//Move a terminal from one index, to another.
 bool stProject::move_terminal(int fr, int to) {
-
+    //Move works by popping the terminal out and adding it back in at
+    //the new position.
+    stTerminal* t = this->find_terminal(fr);
+    this->remove_terminal(fr);
+    if(to<fr)
+        this->add_terminal(t, to);
+    else
+        this->add_terminal(t, to-1);
+    return true;
 }
 
 
